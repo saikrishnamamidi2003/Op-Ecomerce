@@ -1,8 +1,12 @@
 package com.alacriti.merchant.controller;
 
+import com.alacriti.merchant.dto.UserResponse;
+import com.alacriti.merchant.response.ApiResponse;
 import com.alacriti.merchant.service.HealthService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import com.alacriti.merchant.service.UserService;
 
 @RestController
 public class HealthController {
@@ -19,8 +23,9 @@ public class HealthController {
     }
 
     @GetMapping("health/db")
-
     public String databaseHealth(){
         return healthService.getDatabaseVersion();
     }
+
+
 }

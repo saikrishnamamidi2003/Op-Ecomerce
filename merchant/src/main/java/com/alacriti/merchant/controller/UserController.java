@@ -37,4 +37,30 @@ public class UserController {
                 users
         );
     }
+
+    @GetMapping("/{id}")
+    public ApiResponse<UserResponse> getUser(@PathVariable Long id) {
+
+        UserResponse user = userService.getUserById(id);
+
+        return new ApiResponse<>(
+                true,
+                "User fetched successfully",
+                user
+        );
+    }
+
+//    @GetMapping("/{id}")
+//    public ApiResponse<UserResponse> getUserById(
+//            @PathVariable Long id) {
+//
+//        UserResponse response = userService.getUserById(id);
+//
+//        return new ApiResponse<>(
+//                true,
+//                "User fetched successfully",
+//                response
+//        );
+//
+//    }
 }

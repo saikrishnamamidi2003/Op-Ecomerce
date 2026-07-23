@@ -49,4 +49,36 @@ public class UserRepository {
                 """;
         return jdbcTemplate.query(sql, new UserRowMapper());
     }
+
+    public boolean existsByEmail(String email) {
+
+        String sql = """
+            SELECT COUNT(*)
+            FROM users
+            WHERE email = ?
+            """;
+
+        Integer count = jdbcTemplate.queryForObject(
+                sql,
+                Integer.class,
+                email
+        );
+
+        return count != null && count > 0;
+    }
+
+    public User findById(Long id) {
+
+        String sql = """
+            SELECT *
+            FROM users
+            WHERE id = ?
+            """;
+
+        return jdbcTemplate.queryForObject(
+                sql,
+                new UserRowMapper(),
+                id
+        );
+    }
 }
