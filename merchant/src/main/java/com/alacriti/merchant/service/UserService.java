@@ -1,6 +1,8 @@
 package com.alacriti.merchant.service;
 
 import com.alacriti.merchant.dto.UserRequest;
+import com.alacriti.merchant.dto.UserResponse;
+import com.alacriti.merchant.mapper.UserMapper;
 import com.alacriti.merchant.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +27,12 @@ public class UserService {
         return "User Creation Failed";
     }
 
-    public List<User> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
 
-        return userRepository.findAll();
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::toResponse)
+                .toList();
 
     }
 }

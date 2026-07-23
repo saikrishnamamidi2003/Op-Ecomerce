@@ -1,6 +1,7 @@
 package com.alacriti.merchant.controller;
 
 import com.alacriti.merchant.dto.UserRequest;
+import com.alacriti.merchant.dto.UserResponse;
 import com.alacriti.merchant.entity.User;
 import com.alacriti.merchant.response.ApiResponse;
 import com.alacriti.merchant.service.UserService;
@@ -26,14 +27,14 @@ public class UserController {
 
 
     @GetMapping
-    public ApiResponse<List<User>> getUsers(){
+    public ApiResponse<List<UserResponse>> getUsers() {
 
-        List<User> users = userService.getAllUsers();
+        List<UserResponse> users = userService.getAllUsers();
 
-        return ApiResponse.<List<User>>builder()
-                .success(true)
-                .message("Users fetched successfully")
-                .data(users)
-                .build();
+        return new ApiResponse<>(
+                true,
+                "Users fetched successfully",
+                users
+        );
     }
 }
