@@ -47,4 +47,17 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                         .body(response);
     }
+
+
+    @ExceptionHandler(DuplicateProductException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDuplicateProduct(
+            DuplicateProductException ex) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse<>(
+                        false,
+                        ex.getMessage(),
+                        null
+                ));
+    }
 }
