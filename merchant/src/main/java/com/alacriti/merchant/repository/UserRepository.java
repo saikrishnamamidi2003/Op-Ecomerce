@@ -82,7 +82,7 @@ public class UserRepository {
         );
     }
 
-    public boolean exitsById(Long id){
+    public boolean existsById(Long id){
 
         String sql = """
                 SELECT COUNT(*)
