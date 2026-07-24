@@ -81,4 +81,20 @@ public class UserRepository {
                 id
         );
     }
+
+    public boolean exitsById(Long id){
+
+        String sql = """
+                SELECT COUNT(*)
+                FROM users
+                WHERE id = ?
+                """;
+        Integer count = jdbcTemplate.queryForObject(
+                sql,
+                Integer.class,
+                id
+        );
+
+        return count != null && count > 0;
+    }
 }
