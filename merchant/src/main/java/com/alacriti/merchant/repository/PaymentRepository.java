@@ -1,6 +1,7 @@
 package com.alacriti.merchant.repository;
 
 import com.alacriti.merchant.entity.Payment;
+import com.alacriti.merchant.enums.PaymentStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -39,6 +40,22 @@ public class PaymentRepository {
                 payment.getAmount(),
                 payment.getCurrency(),
                 payment.getStatus().name()
+        );
+    }
+
+    public int updateStatus(String paymentReference,
+                            PaymentStatus status) {
+
+        String sql = """
+            UPDATE payments
+            SET status = ?
+            WHERE payment_reference = ?
+            """;
+
+        return jdbcTemplate.update(
+                sql,
+                status.name(),
+                paymentReference
         );
     }
 
