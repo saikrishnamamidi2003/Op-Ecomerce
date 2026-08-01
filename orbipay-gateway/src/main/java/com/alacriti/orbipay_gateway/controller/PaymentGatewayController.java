@@ -11,9 +11,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/gateway/payments")
 public class PaymentGatewayController {
 
+//    @PostMapping
+//    public GatewayPaymentResponse processPayment(
+//            @RequestBody GatewayPaymentRequest request) {
+//
+//        return GatewayPaymentResponse.builder()
+//                .paymentReference(request.getPaymentReference())
+//                .status("SUCCESS")
+//                .message("Payment processed successfully")
+//                .build();
+//    }
+
     @PostMapping
     public GatewayPaymentResponse processPayment(
-            @RequestBody GatewayPaymentRequest request) {
+            @RequestBody GatewayPaymentRequest request)
+            throws InterruptedException {
+
+       Thread.sleep(2000);
 
         return GatewayPaymentResponse.builder()
                 .paymentReference(request.getPaymentReference())
