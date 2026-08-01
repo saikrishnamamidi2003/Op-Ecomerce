@@ -2,6 +2,8 @@ package com.alacriti.merchant.repository;
 
 import com.alacriti.merchant.entity.Payment;
 import com.alacriti.merchant.enums.PaymentStatus;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -24,11 +26,12 @@ public class PaymentRepository {
                     product_id,
                     amount,
                     currency,
-                    status
+                    status,
+                    idempotency_key
                 )
                 VALUES
                 (
-                    ?, ?, ?, ?, ?, ?
+                    ?, ?, ?, ?, ?, ?, ?
                 )
                 """;
 
@@ -39,7 +42,8 @@ public class PaymentRepository {
                 payment.getProductId(),
                 payment.getAmount(),
                 payment.getCurrency(),
-                payment.getStatus().name()
+                payment.getStatus().name(),
+                payment.getIdempotencyKey()
         );
     }
 
@@ -57,6 +61,25 @@ public class PaymentRepository {
                 status.name(),
                 paymentReference
         );
+    }
+
+    public Payment findByIdempotencyKey(String idempotencyKey) {
+
+        String sql = """
+            SELECT *
+            FROM payments
+            WHERE idempotency_key = ?
+            """;
+
+        try {
+            return jdbcTemplate.queryForObject(
+                    sql,
+                    new BeanPropertyRowMapper<>(Payment.class),
+                    idempotencyKey
+            );
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 
 }

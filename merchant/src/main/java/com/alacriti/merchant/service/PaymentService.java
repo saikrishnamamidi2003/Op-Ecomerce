@@ -34,7 +34,22 @@ public class PaymentService {
         this.paymentGatewayClient = paymentGatewayClient;
     }
 
-    public PaymentResponse createPayment(PaymentRequest request) {
+
+
+    public PaymentResponse createPayment(PaymentRequest request, String idempotencyKey) {
+
+        Payment existingPayment =
+                paymentRepository.findByIdempotencyKey(idempotencyKey);
+
+        if (existingPayment != null) {
+
+            return PaymentResponse.builder()
+                    .paymentReference(existingPayment.getPaymentReference())
+                    .amount(existingPayment.getAmount())
+                    .currency(existingPayment.getCurrency())
+                    .status(existingPayment.getStatus())
+                    .build();
+        }
 
         // Validate User
         if (!userRepository.existsById(request.getUserId())) {
@@ -59,6 +74,7 @@ public class PaymentService {
                 .amount(product.getPrice())
                 .currency("USD")
                 .status(PaymentStatus.CREATED)
+                .idempotencyKey(idempotencyKey)
                 .build();
 
         // Save Payment with CREATED status
