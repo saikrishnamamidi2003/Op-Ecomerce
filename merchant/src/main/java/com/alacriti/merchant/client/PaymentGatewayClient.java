@@ -2,6 +2,7 @@ package com.alacriti.merchant.client;
 
 import com.alacriti.merchant.dto.GatewayPaymentRequest;
 import com.alacriti.merchant.dto.GatewayPaymentResponse;
+import com.alacriti.merchant.util.CorrelationIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -35,6 +36,10 @@ public class PaymentGatewayClient {
         log.info("Calling Payment Gateway for payment {}", request.getPaymentReference());
             return restClient.post()
                     .uri("/api/v1/gateway/payments")
+                    .header(
+                            CorrelationIdUtil.CORRELATION_ID,
+                            CorrelationIdUtil.getCorrelationId()
+                    )
                     .body(request)
                     .retrieve()
                     .body(GatewayPaymentResponse.class);
