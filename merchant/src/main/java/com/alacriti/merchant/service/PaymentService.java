@@ -14,6 +14,7 @@ import com.alacriti.merchant.repository.ProductRepository;
 import com.alacriti.merchant.repository.UserRepository;
 import com.alacriti.merchant.util.PaymentReferenceGenerator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PaymentService {
@@ -36,6 +37,7 @@ public class PaymentService {
 
 
 
+    @Transactional
     public PaymentResponse createPayment(PaymentRequest request, String idempotencyKey) {
 
         Payment existingPayment =
@@ -80,6 +82,14 @@ public class PaymentService {
         // Save Payment with CREATED status
         paymentRepository.save(payment);
 
+
+// Temporary - for testing transaction rollback
+//        if (true) {
+//            throw new RuntimeException("Testing transaction rollback");
+//        }
+
+
+
         // Prepare Gateway Request
         GatewayPaymentRequest gatewayRequest = GatewayPaymentRequest.builder()
                 .paymentReference(payment.getPaymentReference())
@@ -90,7 +100,6 @@ public class PaymentService {
         // Call Payment Gateway
         GatewayPaymentResponse gatewayResponse =
                 paymentGatewayClient.processPayment(gatewayRequest);
-
         // Update Payment Status
         if ("SUCCESS".equalsIgnoreCase(gatewayResponse.getStatus())) {
             payment.setStatus(PaymentStatus.SUCCESS);
