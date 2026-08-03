@@ -82,4 +82,25 @@ public class PaymentRepository {
         }
     }
 
+    public Payment findByReference(String paymentReference) {
+
+        String sql = """
+            SELECT *
+            FROM payments
+            WHERE payment_reference = ?
+            """;
+
+        try {
+
+            return jdbcTemplate.queryForObject(
+                    sql,
+                    new BeanPropertyRowMapper<>(Payment.class),
+                    paymentReference
+            );
+
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
+    }
+
 }

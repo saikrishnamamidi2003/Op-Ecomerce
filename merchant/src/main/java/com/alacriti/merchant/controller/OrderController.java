@@ -32,4 +32,19 @@ public class OrderController {
                 )
         );
     }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrder(
+            @PathVariable Long orderId) {
+
+        OrderResponse response = orderService.getOrder(orderId);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Order fetched successfully",
+                        response
+                )
+        );
+    }
 }

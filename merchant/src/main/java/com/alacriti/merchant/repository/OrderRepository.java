@@ -1,6 +1,7 @@
 package com.alacriti.merchant.repository;
 
 import com.alacriti.merchant.entity.Order;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -64,10 +65,17 @@ public class OrderRepository {
                 WHERE id = ?
                 """;
 
-        return jdbcTemplate.queryForObject(
-                sql,
-                new BeanPropertyRowMapper<>(Order.class),
-                orderId
-        );
+
+        try {
+
+            return jdbcTemplate.queryForObject(
+                    sql,
+                    new BeanPropertyRowMapper<>(Order.class),
+                    orderId
+            );
+
+        } catch (EmptyResultDataAccessException ex) {
+            return null;
+        }
     }
 }

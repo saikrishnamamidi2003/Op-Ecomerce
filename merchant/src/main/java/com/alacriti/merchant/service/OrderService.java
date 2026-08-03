@@ -103,4 +103,21 @@ public class OrderService {
                 .status("CREATED")
                 .build();
     }
+
+    public OrderResponse getOrder(Long orderId) {
+
+        Order order = orderRepository.findById(orderId);
+
+        if (order == null) {
+            throw new ResourceNotFoundException(
+                    "Order not found with id " + orderId);
+        }
+
+        return OrderResponse.builder()
+                .orderId(order.getId())
+                .orderReference(order.getOrderReference())
+                .totalAmount(order.getTotalAmount())
+                .status(order.getStatus())
+                .build();
+    }
 }

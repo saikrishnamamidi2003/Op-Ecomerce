@@ -5,6 +5,7 @@ import com.alacriti.merchant.dto.PaymentResponse;
 import com.alacriti.merchant.response.ApiResponse;
 import com.alacriti.merchant.service.PaymentService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,6 +30,22 @@ public class PaymentController {
                 true,
                 "Payment created successfully",
                 response
+        );
+    }
+
+    @GetMapping("/{paymentReference}")
+    public ResponseEntity<ApiResponse<PaymentResponse>> getPayment(
+            @PathVariable String paymentReference) {
+
+        PaymentResponse response =
+                paymentService.getPayment(paymentReference);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Payment fetched successfully",
+                        response
+                )
         );
     }
 }

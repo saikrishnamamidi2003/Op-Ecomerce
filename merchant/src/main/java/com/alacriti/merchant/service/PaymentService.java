@@ -5,10 +5,12 @@ import com.alacriti.merchant.dto.GatewayPaymentRequest;
 import com.alacriti.merchant.dto.GatewayPaymentResponse;
 import com.alacriti.merchant.dto.PaymentRequest;
 import com.alacriti.merchant.dto.PaymentResponse;
+import com.alacriti.merchant.entity.Order;
 import com.alacriti.merchant.entity.Payment;
 import com.alacriti.merchant.entity.Product;
 import com.alacriti.merchant.enums.PaymentStatus;
 import com.alacriti.merchant.exception.ResourceNotFoundException;
+import com.alacriti.merchant.repository.OrderRepository;
 import com.alacriti.merchant.repository.PaymentRepository;
 import com.alacriti.merchant.repository.ProductRepository;
 import com.alacriti.merchant.repository.UserRepository;
@@ -20,17 +22,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentService {
 
     private final UserRepository userRepository;
-    private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
     private final PaymentGatewayClient paymentGatewayClient;
 
     public PaymentService(UserRepository userRepository,
-                          ProductRepository productRepository,
+                          OrderRepository orderRepository,
                           PaymentRepository paymentRepository,
                           PaymentGatewayClient paymentGatewayClient) {
 
         this.userRepository = userRepository;
-        this.productRepository = productRepository;
+        this.orderRepository = orderRepository;
         this.paymentRepository = paymentRepository;
         this.paymentGatewayClient = paymentGatewayClient;
     }
@@ -60,20 +62,22 @@ public class PaymentService {
         }
 
         // Validate Product
-        if (!productRepository.existsById(request.getOrderId())) {
+        Order order = orderRepository.findById(request.getOrderId());
+
+        if (order == null) {
             throw new ResourceNotFoundException(
-                    "Product not found with id " + request.getOrderId());
+                    "Order not found with id " + request.getOrderId());
         }
 
         // Get Product Details
-        Product product = productRepository.findById(request.getOrderId());
+        //Product product = productRepository.findById(request.getOrderId());
 
         // Create Payment
         Payment payment = Payment.builder()
                 .paymentReference(PaymentReferenceGenerator.generate())
                 .userId(request.getUserId())
                 .orderId(request.getOrderId())
-                .amount(product.getPrice())
+                .amount(order.getTotalAmount())
                 .currency("USD")
                 .status(PaymentStatus.CREATED)
                 .idempotencyKey(idempotencyKey)
@@ -114,6 +118,24 @@ public class PaymentService {
         );
 
         // Return Response
+        return PaymentResponse.builder()
+                .paymentReference(payment.getPaymentReference())
+                .amount(payment.getAmount())
+                .currency(payment.getCurrency())
+                .status(payment.getStatus())
+                .build();
+    }
+
+    public PaymentResponse getPayment(String paymentReference) {
+
+        Payment payment =
+                paymentRepository.findByReference(paymentReference);
+
+        if (payment == null) {
+            throw new ResourceNotFoundException(
+                    "Payment not found");
+        }
+
         return PaymentResponse.builder()
                 .paymentReference(payment.getPaymentReference())
                 .amount(payment.getAmount())
