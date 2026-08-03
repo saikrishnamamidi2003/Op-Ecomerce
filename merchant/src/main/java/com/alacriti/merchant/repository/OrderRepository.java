@@ -41,7 +41,7 @@ public class OrderRepository {
 
             PreparedStatement ps = connection.prepareStatement(
                     sql,
-                    Statement.RETURN_GENERATED_KEYS
+                    new String[]{"id"}
             );
 
             ps.setString(1, order.getOrderReference());

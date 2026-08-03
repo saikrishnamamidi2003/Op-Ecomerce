@@ -22,7 +22,7 @@ public class Payment {
 
     private Long userId;
 
-    private Long productId;
+    private Long orderId;
 
     private BigDecimal amount;
 

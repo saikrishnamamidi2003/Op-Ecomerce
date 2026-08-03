@@ -60,19 +60,19 @@ public class PaymentService {
         }
 
         // Validate Product
-        if (!productRepository.existsById(request.getProductId())) {
+        if (!productRepository.existsById(request.getOrderId())) {
             throw new ResourceNotFoundException(
-                    "Product not found with id " + request.getProductId());
+                    "Product not found with id " + request.getOrderId());
         }
 
         // Get Product Details
-        Product product = productRepository.findById(request.getProductId());
+        Product product = productRepository.findById(request.getOrderId());
 
         // Create Payment
         Payment payment = Payment.builder()
                 .paymentReference(PaymentReferenceGenerator.generate())
                 .userId(request.getUserId())
-                .productId(request.getProductId())
+                .orderId(request.getOrderId())
                 .amount(product.getPrice())
                 .currency("USD")
                 .status(PaymentStatus.CREATED)

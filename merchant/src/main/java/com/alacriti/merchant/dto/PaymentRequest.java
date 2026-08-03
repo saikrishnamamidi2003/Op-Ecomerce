@@ -10,6 +10,5 @@ public class PaymentRequest {
     private Long userId;
 
     @NotNull
-    private Long productId;
-
+    private Long orderId;
 }

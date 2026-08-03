@@ -23,7 +23,7 @@ public class PaymentRepository {
                 (
                     payment_reference,
                     user_id,
-                    product_id,
+                    order_id,
                     amount,
                     currency,
                     status,
@@ -39,7 +39,7 @@ public class PaymentRepository {
                 sql,
                 payment.getPaymentReference(),
                 payment.getUserId(),
-                payment.getProductId(),
+                payment.getOrderId(),
                 payment.getAmount(),
                 payment.getCurrency(),
                 payment.getStatus().name(),
